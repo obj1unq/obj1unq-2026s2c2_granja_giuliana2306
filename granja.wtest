@@ -1,9 +1,90 @@
+import src.cultivos.*
 import wollok.game.*
 import granja.*
 describe "test de la granja" {
 
+    test "el personaje femenino cuando esta sobre nada" {
+        personaje.genero(femenino)
+        assert.equals("f-player-normal.png", personaje.image())
+    }
+    test "El personaje femenino cuando esta sobre algo" {
+        personaje.genero(femenino)
+        personaje.position(game.center())
+        game.addVisual(objetoParaPrueba)
+        assert.equals("f-player-abajo.png", personaje.image())
+    }
+    test "el personaje masculino cuando esta sobre nada" {
+        personaje.genero(masculino)
+        assert.equals("m-player-normal.png", personaje.image())
+    }
+    test "el personaje masculino cuando esta sobre algo" {
+        personaje.genero(masculino)
+        personaje.position(game.center())
+        game.addVisual(objetoParaPrueba)
+        assert.equals("m-player-abajo.png", personaje.image())
+    }
+    test "plantar tomaco" {
+        var tomaco = new Tomaco()
 
-    test "personaje" {
-        assert.that(true)
+        personaje.position(game.at(5,5))
+        
+        personaje.plantar(tomaco)
+        assert.equals(game.at(5,5), tomaco.position())
+        assert.equals(#{tomaco}, granja.cultivos())
+    }
+    test "Intentar plantar trigo" {
+        var trigo = new Trigo()
+        var tomaco = new Tomaco()
+
+        personaje.position(game.at(5,5))
+        personaje.plantar(tomaco)
+        assert.throwsException({ personaje.plantar(trigo) })
+
+        personaje.position(game.at(6,6))
+        assert.throwsException({personaje.plantar(tomaco)})
+
+        personaje.plantar(trigo)
+        assert.equals(game.at(6,6), trigo.position())
+        assert.equals(#{tomaco, trigo}, granja.cultivos())
+    }
+    test "sin cultivo" {
+        assert.throwsException({personaje.regar()})
+    }
+    test "Plantar y regar maiz" {
+        var maiz = new Maiz()
+
+        personaje.plantar(maiz)
+        assert.equals("maiz_bebe.png", maiz.image())
+        personaje.regar()
+        assert.equals("maiz_adulto.png", maiz.image())
+        personaje.regar()
+        assert.equals("maiz_adulto.png", maiz.image())
+    }
+    test "sembrar y regar trigo" {
+         var trigo = new Trigo()
+
+        personaje.plantar(trigo)
+        assert.equals("trigo_0.png", trigo.image()) 
+        personaje.regar()
+        assert.equals("trigo_1.png", trigo.image())
+        personaje.regar()
+        assert.equals("trigo_2.png", trigo.image())
+        personaje.regar()
+        assert.equals("trigo_3.png", trigo.image())
+        personaje.regar()
+        assert.equals("trigo_0.png", trigo.image())
     }
 }
+
+/*
+Se siembra el trigo.
+Verificar que la imagen es trigo_0.png.
+Regar.
+Verificar que la imagen es trigo_1.png.
+Regar.
+Verificar que la imagen es trigo_2.png.
+Regar.
+Verificar que la imagen es trigo_3.png.
+Regar.
+Verificar que la imagen es trigo_0.png.
+*/

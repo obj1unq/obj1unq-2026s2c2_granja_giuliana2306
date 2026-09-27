@@ -39,7 +39,16 @@ object personaje {
 
 	method plantar(cultivo) {
 		propiedad.plantar(cultivo, self.position())
-	} 
+	}
+	method regar() {
+		self.validarRegar()
+		granja.cultivoEn(self.position()).regar()
+	}
+	method validarRegar(){
+		if (not granja.hayCultivo(self.position())) {
+			self.error("no tengo nada para regar")
+		}
+	}
 	
 }
 
@@ -67,4 +76,11 @@ object granja {
 	method hayCultivo(position) {
 		return cultivos.any({cultivo => cultivo.position() == position})
 	}
+	method cultivoEn(position) {
+		return cultivos.find({cultivo => cultivo.position() == position})
+}
+}
+
+object objetoParaPrueba {
+    var property position = game.center()
 }

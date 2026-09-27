@@ -74,17 +74,101 @@ describe "test de la granja" {
         personaje.regar()
         assert.equals("trigo_0.png", trigo.image())
     }
+    test "sembrar tomaco" {
+        var tomaco = new Tomaco()
+        var trigo = new Trigo()
+
+        game.height(5)
+        game.width(5)
+        personaje.position(game.at(3,3))
+        personaje.plantar(tomaco)
+        personaje.regar()
+        assert.equals(game.at(3,4), tomaco.position() )
+        personaje.position(game.at(3,4))
+        personaje.regar()
+        assert.equals(game.at(3,0), tomaco.position())
+        personaje.position(game.at(3,1))
+        personaje.plantar(trigo)
+        personaje.position(game.at(3,0))
+        personaje.regar()
+        assert.equals(game.at(3,0), tomaco.position())
+
+    }
+    test "Cosechar" {
+        personaje.position(game.at(3,3))
+
+        assert.throwsException({personaje.cosechar()})
+
+        var tomaco = new Tomaco()
+        personaje.plantar(tomaco) 
+        personaje.cosechar()
+        assert.equals(#{}, granja.cultivos())
+        assert.equals([tomaco], granja.cultivosCosechados())
+
+        var maiz = new Maiz()
+        personaje.plantar(maiz)
+        assert.throwsException({personaje.cosechar()})
+        personaje.regar()
+        personaje.cosechar()
+        assert.equals(#{}, granja.cultivos()) 
+        assert.equals([tomaco, maiz], granja.cultivosCosechados())
+
+        var trigo = new Trigo()
+        personaje.plantar(trigo)
+        assert.throwsException({personaje.cosechar()})
+        personaje.regar()
+        assert.throwsException({personaje.cosechar()})
+        personaje.regar()
+        assert.that(trigo.sePuedeCosechar())
+        personaje.regar()
+        personaje.cosechar()
+        assert.equals(#{}, granja.cultivos())
+        assert.equals([tomaco, maiz, trigo], granja.cultivosCosechados())
+    }
+    test "Venta de cultivos" {
+
+    personaje.position(game.at(3,3))
+
+    var maiz = new Maiz()
+    personaje.plantar(maiz)
+    personaje.regar()
+    personaje.cosechar()
+
+    assert.equals(150, granja.oroPorVenta())
+
+    var tomaco = new Tomaco()
+    personaje.plantar(tomaco)
+    personaje.cosechar()
+
+    assert.equals(230, granja.oroPorVenta())
+
+    var trigo = new Trigo()
+    personaje.plantar(trigo)
+    personaje.regar()
+    personaje.regar()
+    personaje.cosechar()
+
+    assert.equals(330, granja.oroPorVenta())
+
+    granja.venderTodo()
+
+    assert.equals(330, granja.totalDeOro())
+    assert.equals(0, granja.cantidadDeCosecha())
+    assert.equals(0, granja.oroPorVenta())
+
+    var otroTrigo = new Trigo()
+    personaje.plantar(otroTrigo)
+    personaje.regar()
+    personaje.regar()
+    personaje.regar()
+    personaje.cosechar()
+
+    assert.equals(200, granja.oroPorVenta())
+
+    granja.venderTodo()
+
+    assert.equals(530, granja.totalDeOro())
+    assert.equals(0, granja.cantidadDeCosecha())
+}
 }
 
-/*
-Se siembra el trigo.
-Verificar que la imagen es trigo_0.png.
-Regar.
-Verificar que la imagen es trigo_1.png.
-Regar.
-Verificar que la imagen es trigo_2.png.
-Regar.
-Verificar que la imagen es trigo_3.png.
-Regar.
-Verificar que la imagen es trigo_0.png.
-*/

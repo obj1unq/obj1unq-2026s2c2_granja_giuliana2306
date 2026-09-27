@@ -2,6 +2,7 @@ import src.cultivos.*
 import wollok.game.*
 import personaje.*
 import cultivos.*
+import granja.*
 
 program lagranja {
 	//  CONFIG	
@@ -16,10 +17,10 @@ program lagranja {
 	keyboard.m().onPressDo({ personaje.plantar(new Maiz()) })
     keyboard.t().onPressDo({ personaje.plantar(new Trigo()) })
     keyboard.o().onPressDo({ personaje.plantar(new Tomaco()) })
-	keyboard.r().onPressDo({personaje.regar(new Maiz())})
-	keyboard.r().onPressDo({personaje.regar(new Tomaco())})
-	keyboard.r().onPressDo({personaje.regar(new Trigo())})
-
+	keyboard.r().onPressDo({personaje.regar()})
+	keyboard.c().onPressDo({personaje.cosechar()})
+	game.onCollideDo(mercado, {personaje => granja.venderTodo()})
+	keyboard.space().onPressDo({personaje.informarVenta()})
 
  	//  COMIENZA
 	game.start()
